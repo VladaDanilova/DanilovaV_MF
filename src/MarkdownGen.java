@@ -2,8 +2,14 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.function.Consumer;
+
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.readAllLines;
+
+/**
+ * @author vladadanilova
+ */
 
 public class MarkdownGen {
     private static int [] d = new int[6];
@@ -25,54 +31,75 @@ public class MarkdownGen {
             }
             try {
                 FileReader reader = new FileReader(str);
-                //BufferedReader read = new BufferedReader(reader);
-                /*StringBuilder content = new StringBuilder();
-                List<String> lines = readAllLines(Paths.get(str), UTF_8);
-                for (String s: lines) {
-                        if (s.contains("#") && s.indexOf("#") == 0) {
-                            content.append(print(s));
-                        }
-                }
-                content.append("\n"); // отступ после оглавления
-
-                    for (String s: lines) {
-                        content.append(s).append("\n");
-                    }
-                    Files.write(Paths.get(str), Collections.singleton(content));*/
-
             } catch (FileNotFoundException e) {
                 System.out.println("Ошибка - FileNotFoundException. Не удалось найти файл");
             }
 
             StringBuilder content = new StringBuilder();
             List<String> lines = null;
+            String check = "";
             try {
                 lines = readAllLines(Paths.get(str), UTF_8);
             } catch (IOException e) {
                 System.out.println("Ошибка - IOException. Не удалось считать данные из файла");
             }
             for (String s: lines) {
+                check = check + s + "\n";
                 if (s.contains("#") && s.indexOf("#") == 0) {
                     content.append(print(s));
                 }
             }
-            content.append("\n"); // отступ после оглавления
-
-            for (String s: lines) {
-                content.append(s).append("\n");
+            int again = 0;
+            if (content.length() == check.length()) {
+                for (int i = 0; i < content.length(); i++) {
+                    if (content.charAt(i) == check.charAt(i)) {
+                        again++;
+                    }
+                }
             }
-            try {
-                Files.write(Paths.get(str), Collections.singleton(content));
-            } catch (IOException e) {
-                System.out.println("Ошибка - IOException. Не удалось обновить файл. Проверьте права доступа");
+            else
+                again = -1;
+            if (again == (content.length()))
+            {
+                System.out.println("Оглавление уже было сделано");
+                break;
             }
-            System.out.println(content);
+            else  if (again == 0){
+                content.append("\n"); // отступ после оглавления
 
-
+                for (String s: lines) {
+                    content.append(s).append("\n");
+                }
+                try {
+                    Files.write(Paths.get(str), Collections.singleton(content));
+                } catch (IOException e) {
+                    System.out.println("Ошибка - IOException. Не удалось обновить файл. Проверьте права доступа");
+                }
+                System.out.println(content);
+            }
+            else if (again != 0) {
+                content.append("\n"); // отступ после оглавления
+                lines.forEach(new Consumer<String>() {
+                    boolean flag = false;
+                    @Override
+                    public void accept(String s) {
+                        if ((s.contains("#") && s.indexOf("#") == 0)) {
+                            flag = true;
+                        }
+                        if (flag) {
+                            content.append(s).append("\n");
+                        }
+                    }
+                });
+                try {
+                    Files.write(Paths.get(str), Collections.singleton(content));
+                } catch (IOException e) {
+                    System.out.println("Ошибка - IOException. Не удалось обновить файл. Проверьте права доступа");
+                }
+                System.out.println(content);
+            }
         }
         sc.close();
-
-
 
     }
 
