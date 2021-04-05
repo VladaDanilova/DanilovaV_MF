@@ -164,7 +164,7 @@ public class MarkdownGen {
     }
 
     private static String link (String str) {
-        return edit(str).replace(' ', '-');
+        return edit(str).replace(' ', '-').toLowerCase();
     }
 
 }
