@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="MarkdownDanilova:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/MarkdownDanilova_jar</output-path>
+    <root id="archive" name="MarkdownDanilova.jar">
+      <element id="module-output" name="MarkdownDanilova" />
+    </root>
+  </artifact>
+</component>

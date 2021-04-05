@@ -19,7 +19,7 @@ public class MarkdownGen {
         Scanner sc = new Scanner(System.in);
         boolean check_file = true;
         while (check_file) {
-            System.out.println("Введите путь к markdown файлу"); // /Users/vladadanilova/Desktop/Veeam.md
+            System.out.println("Введите путь к markdown файлу");
             String str = sc.nextLine();
             File input = new File(str);
             if (input.exists() && (getFileExtension(str).equals("md") || getFileExtension(str).equals("markdown")))
@@ -28,11 +28,13 @@ public class MarkdownGen {
             }
             else {
                 System.out.println("Нет такого markdown файла");
+                continue;
             }
             try {
                 FileReader reader = new FileReader(str);
             } catch (FileNotFoundException e) {
                 System.out.println("Ошибка - FileNotFoundException. Не удалось найти файл");
+                continue;
             }
 
             StringBuilder content = new StringBuilder();
@@ -42,6 +44,7 @@ public class MarkdownGen {
                 lines = readAllLines(Paths.get(str), UTF_8);
             } catch (IOException e) {
                 System.out.println("Ошибка - IOException. Не удалось считать данные из файла");
+                continue;
             }
             for (String s: lines) {
                 check = check + s + "\n";
@@ -50,6 +53,7 @@ public class MarkdownGen {
                 }
             }
             int again = 0;
+            //смотрим, было ли сделано оглавление ранее
             if (content.length() == check.length()) {
                 for (int i = 0; i < content.length(); i++) {
                     if (content.charAt(i) == check.charAt(i)) {
@@ -59,12 +63,12 @@ public class MarkdownGen {
             }
             else
                 again = -1;
-            if (again == (content.length()))
+            if (again == (content.length())) //было
             {
                 System.out.println("Оглавление уже было сделано");
                 break;
             }
-            else  if (again == 0){
+            else  if (again == 0){ //не было оглавления
                 content.append("\n"); // отступ после оглавления
 
                 for (String s: lines) {
@@ -77,7 +81,7 @@ public class MarkdownGen {
                 }
                 System.out.println(content);
             }
-            else if (again != 0) {
+            else if (again != 0) { //оглавление изменилось
                 content.append("\n"); // отступ после оглавления
                 lines.forEach(new Consumer<String>() {
                     boolean flag = false;
@@ -96,7 +100,7 @@ public class MarkdownGen {
                 } catch (IOException e) {
                     System.out.println("Ошибка - IOException. Не удалось обновить файл. Проверьте права доступа");
                 }
-                System.out.println(content);
+                System.out.println(content); //вывод в standard output
             }
         }
         sc.close();
